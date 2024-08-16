@@ -11,6 +11,8 @@ local Legion = select(4,GetBuildInfo()) >= 70000
 local BFA = select(4,GetBuildInfo()) >= 80000
 local Shadowlands = select(4, GetBuildInfo()) >= 90000
 local Dragonflight = select(4, GetBuildInfo()) >= 100000
+local TWW = select(4, GetBuildInfo()) >= 110000
+
 
 local DEBUG = false
 local spellIDsEnabled = DEBUG -- Toggles display of spellIDs in tooltips. Useful for working on spell configs
@@ -423,6 +425,180 @@ local BuildDragonflightClassConfigStatusText = function()
     end
   end
   ret = ret .. "\nIf your spec is Not Yet Implemented (NYI), please send me your customized config via Github or Discord, so I can add it as the default config for your spec!\n"
+  return ret
+end
+
+-- TWW Changes
+-- wrap deprecated API functions with new API calls:
+--   C_Spell.GetSpellInfo, C_Spell.GetSpellCooldown, C_Spell.GetSpellCharges, C_Item.GetItemInfo, C_Container.GetItemCooldown, C_AddOns.GetAddOnInfo, C_UnitAuras.GetBuffDataByIndex, C_UnitAuras.GetDebuffDataByIndex
+
+local _GetSpellInfo, _GetSpellCooldown, _GetSpellCharges, _GetItemInfo, _GetItemCooldown, _GetAddOnInfo, _LoadAddOn, _DisableAddOn, _UnitBuff, _UnitDebuff = GetSpellInfo, GetSpellCooldown, GetSpellCharges, GetItemInfo, GetItemCooldown, GetAddOnInfo, DisableAddOn, LoadAddOn, UnitBuff, UnitDebuff
+local GetSpellInfo, GetSpellCooldown, GetSpellCharges, GetItemInfo, GetItemCooldown, GetAddOnInfo, LoadAddOn, DisableAddOn, UnitBuff, UnitDebuff = _GetSpellInfo, _GetSpellCooldown, _GetSpellCharges, _GetItemInfo, _GetItemCooldown, _GetAddOnInfo, _LoadAddOn, _DisableAddOn, _UnitBuff, _UnitDebuff
+
+if TWW then
+  GetSpellInfo = function(...)
+    local spellInfo = C_Spell.GetSpellInfo(...)
+    if spellInfo then
+      return spellInfo.name, spellInfo.iconID, spellInfo.originalIconID, spellInfo.castTime, spellInfo.minRange, spellInfo.maxRange, spellInfo.spellID
+    end
+  end
+  GetSpellCooldown = function(...)
+    local spellCooldownInfo = C_Spell.GetSpellCooldown(...)
+    if spellCooldownInfo then
+	  return spellCooldownInfo.startTime, spellCooldownInfo.duration, spellCooldownInfo.isEnabled, spellCooldownInfo.modRate
+	end
+  end
+  GetSpellCharges = function(...)
+    local spellChargeInfo = C_Spell.GetSpellCharges(...)
+    if spellChargeInfo then
+      return spellChargeInfo.currentCharges, spellChargeInfo.maxCharges, spellChargeInfo.cooldownStartTime, spellChargeInfo.cooldownDuration, spellChargeInfo.chargeModRate
+	end
+  end
+  GetItemInfo = function(...)
+    local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expansionID, setID, isCraftingReagent = C_Item.GetItemInfo(...)
+    return itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expansionID, setID, isCraftingReagent
+  end
+  GetItemCooldown = function(...)
+    local startTime, duration, enable = C_Container.GetItemCooldown(...)
+    return startTime, duration, enable
+  end
+  GetAddOnInfo = function(id_or_name)
+    if type(id_or_name) == "number" then
+      return _C_AddOns.GetAddOnInfo(id_or_name)
+    else
+      for i=1, C_AddOns.GetNumAddOns() do
+        local name, title, notes, enabled, loadable, reason, security_clearance = C_AddOns.GetAddOnInfo(i)
+        if name == id_or_name then
+          return name, title, notes, enabled, loadable, reason, security_clearance
+        end
+      end
+    end
+    return
+  end
+  DisableAddOn = function(...)
+    local name, character = C_AddOns.DisableAddOn(...)
+    return name, character
+  end
+  LoadAddOn = function(...)
+    local loaded, reason = C_AddOns.LoadAddOn(...)
+    return loaded, reason
+  end
+  UnitBuff = function(...)
+	local auraBuff = C_UnitAuras.GetBuffDataByIndex(...)
+	if auraBuff then
+	  local name, icon, count, debuffType, duration, expirationTime, source, isStealable, spellId = auraBuff.name, auraBuff.icon, auraBuff.charges, auraBuff.dispelName, auraBuff.duration, auraBuff.expirationTime, auraBuff.sourceUnit, auraBuff.isStealable, auraBuff.spellId
+	  return name, icon, count, debuffType, duration, expirationTime, source, isStealable, _, spellId 
+	end		
+  end
+  UnitDebuff = function(...)
+	local auraDebuff = C_UnitAuras.GetDebuffDataByIndex(...)
+	if auraDebuff then 
+	  local name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId = auraDebuff.name, auraDebuff.icon, auraDebuff.charges, auraDebuff.dispelName, auraDebuff.duration, auraDebuff.expirationTime, auraDebuff.sourceUnit, auraDebuff.isStealable, auraDebuff.spellId
+	  return name, icon, count, debuffType, duration, expirationTime, source, isStealable, _, spellId 
+	end
+  end
+end
+
+local TWWStatusText = ""
+
+TWWStatusText = TWWStatusText .. "Welcome to EventHorizon for The War Within -- This is an alpha test release, so nothing probably works! "
+TWWStatusText = TWWStatusText .. "If you do encounter a bug, please copy the whole error message including stack trace and post it in EventHorizon's discord \n\n"
+TWWStatusText = TWWStatusText .. "Class configurations are to be considered a team effort: if you have an updated class config for your spec, please post it to EventHorizon's Discord so it can be added!"
+TWWStatusText = TWWStatusText .. "  Thanks to Brusalk and many others for all the work so far! \n\n"
+
+local TWWSpecIDMapping = {
+  [62] = "Mage: Arcane",
+  [63] = "Mage: Fire",
+  [64] = "Mage: Frost",
+  [65] = "Paladin: Holy",
+  [66] = "Paladin: Protection",
+  [70] = "Paladin: Retribution",
+  [71] = "Warrior: Arms",
+  [72] = "Warrior: Fury",
+  [73] = "Warrior: Protection",
+  [102] = "Druid: Balance",
+  [103] = "Druid: Feral",
+  [104] = "Druid: Guardian",
+  [105] = "Druid: Restoration",
+  [250] = "Death Knight: Blood",
+  [251] = "Death Knight: Frost",
+  [252] = "Death Knight: Unholy",
+  [253] = "Hunter: Beast Mastery",
+  [254] = "Hunter: Marksmanship",
+  [255] = "Hunter: Survival",
+  [256] = "Priest: Discipline",
+  [257] = "Priest: Holy",
+  [258] = "Priest: Shadow",
+  [259] = "Rogue: Assassination",
+  [260] = "Rogue: Outlaw",
+  [261] = "Rogue: Subtlety",
+  [262] = "Shaman: Elemental",
+  [263] = "Shaman: Enhancement",
+  [264] = "Shaman: Restoration",
+  [265] = "Warlock: Affliction",
+  [266] = "Warlock: Demonology",
+  [267] = "Warlock: Destruction",
+  [268] = "Monk: Brewmaster",
+  [269] = "Monk: Windwalker",
+  [270] = "Monk: Mistweaver",
+  [577] = "Demon Hunter: Havoc",
+  [581] = "Demon Hunter: Vengeance",
+  [1467] = "Evoker: Devastation",
+  [1468] = "Evoker: Preservation",
+}
+
+-- tww-todo: just a copy of dragonflight; make this list meaningful
+local TWWClassesNotImplemented = {
+  [62] = "Mage: Arcane",
+  [63] = "Mage: Fire",
+  [64] = "Mage: Frost",
+  [65] = "Paladin: Holy",
+  [66] = "Paladin: Protection",
+  [70] = "Paladin: Retribution",
+  [71] = "Warrior: Arms",
+  [72] = "Warrior: Fury",
+  [73] = "Warrior: Protection",
+  [102] = "Druid: Balance",
+  [103] = "Druid: Feral",
+  [104] = "Druid: Guardian",
+  [105] = "Druid: Restoration",
+  [250] = "Death Knight: Blood",
+  [251] = "Death Knight: Frost",
+  [252] = "Death Knight: Unholy",
+  [253] = "Hunter: Beast Mastery",
+  [254] = "Hunter: Marksmanship",
+  [255] = "Hunter: Survival",
+  [256] = "Priest: Discipline",
+  [257] = "Priest: Holy",
+  [258] = "Priest: Shadow",
+  [259] = "Rogue: Assassination",
+  [260] = "Rogue: Outlaw",
+  [261] = "Rogue: Subtlety",
+  [262] = "Shaman: Elemental",
+  [263] = "Shaman: Enhancement",
+  [264] = "Shaman: Restoration",
+  [265] = "Warlock: Affliction",
+  [266] = "Warlock: Demonology",
+  [267] = "Warlock: Destruction",
+  [268] = "Monk: Brewmaster",
+  [269] = "Monk: Windwalker",
+  [270] = "Monk: Mistweaver",
+  [577] = "Demon Hunter: Havoc",
+  [581] = "Demon Hunter: Vengeance",
+  [1467] = "Evoker: Devastation",
+  [1468] = "Evoker: Preservation",
+}
+
+
+local BuildTWWClassConfigStatusText = function()
+  local ret = "EventHorizon - TWW Alpha Test Release\nCurrent Class Status \n\n"
+  for specID, classname in pairs(TWWSpecIDMapping) do
+    local id, name, desc, icon, background, role, class = GetSpecializationInfoByID(specID)
+    if TWWClassesNotImplemented[specID] then
+      ret = ret .. name .. " | NYI \n"
+    end
+  end
+  ret = ret .. "\nIf your spec is Not Yet Implemented (NYI), please send the customized config via Github or Discord, so it can be added as the default config for your spec.\n"
   return ret
 end
 
@@ -965,8 +1141,8 @@ local mainframe_UNIT_AURA = function (self,unit)
   if vars.buff[unit] then
     table.wipe(vars.buff[unit])
     for i = 1, 50 do
-      local name, icon, count, _, duration, expirationTime, source, _, _, spellID = UnitBuff(unit,i)
-      --print(name,icon,count,duration,expirationTime,source,spellID)
+      local name, icon, count, debuffType, duration, expirationTime, source, _, _, spellID = UnitBuff(unit,i)
+      -- print(name,icon,count,debuffType,duration,expirationTime,source,spellID)
       if not (name and spellID) then break end
       table.insert(vars.buff[unit],{
         name = name,
@@ -2079,9 +2255,10 @@ local SpellFrame_SPELL_UPDATE_COOLDOWN = function (self)
 
   if self.cooldownTable then -- we choose the one with the longer CD (This is mostly for sfiend/mindbender bar)
     for i,cooldown in pairs(self.cooldownTable) do
-      start2, duration2, enabled2 = self.CooldownFunction(cooldown)
-      if start2+duration2 > start+duration then
-        --print(cooldown, "better", start2+duration2, start+duration)
+      start2, duration2, enabled2, _ = self.CooldownFunction(cooldown)
+	  --print("  cooldown:", cooldown, "start2:", start2, " duration2:", duration2, " start+duration:", start+duration)
+	  if start2+duration2 > start+duration then
+        --print("    cooldown:",cooldown, "better","2 ",start2+duration2, "1 ", start+duration)
         start = start2
         duration = duration2
         enabled = enabled2
@@ -2092,7 +2269,7 @@ local SpellFrame_SPELL_UPDATE_COOLDOWN = function (self)
     start, duration, enabled = self.CooldownFunction(self.cooldownID or self.spellname)
     ready = enabled==1 and start~=0 and duration and start+duration
   end
-  --print(start, duration, enabled, ready)
+  --print("start:", start, "duration:", duration, "isEnabled:", enabled, "ready:", ready)
   local _, gcdDuration = GetSpellCooldown(ns.config.gcdSpellID)
   if ready and duration>gcdDuration then
     -- The spell is on cooldown, but not just because of the GCD.
@@ -3303,15 +3480,15 @@ function ns:Initialize()
   }
 
   StaticPopupDialogs["EH_GithubDialog1"] = {
-    text = "EventHorizon is now on Github! If you encounter any bugs or errors with EventHorizon, please create a new 'issue' on the below Github so I can track and fix it!",
+    text = "EventHorizon is on Github! If you encounter any bugs or errors with EventHorizon, please create a new 'issue' on the below Github to track and fix it!",
     hasEditBox = true,
     button1 = "Okay",
     hideOnEscape = 1,
     OnShow = function(self, data)
-      self.editBox:SetText("https://github.com/Brusalk/EventHorizon_Continued")
+      self.editBox:SetText("https://github.com/calenbraga/EventHorizon_Continued")
     end,
     EditBoxOnTextChanged = function(self, data)
-      self:SetText("https://github.com/Brusalk/EventHorizon_Continued") -- Esentially don't allow them to change the value
+      self:SetText("https://github.com/calenbraga/EventHorizon_Continued") -- Esentially don't allow them to change the value
     end,
     OnAccept = function()
       StaticPopup_Hide("EH_GithubDialog1")
