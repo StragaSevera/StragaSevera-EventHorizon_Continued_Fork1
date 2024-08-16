@@ -1,7 +1,7 @@
-## Interface: 100002
+## Interface: 110002
 ## Title: EventHorizon
-## Author: Brusalk
-## Version: 1.11.0-beta
+## Author: Brusalk et al
+## Version: 1.11.0.2-alpha
 ## Dependencies:
 ## OptDeps: SharedMedia, LibArtifactData-1.0
 ## OptionalDepts: LibArtifactData-1.0
