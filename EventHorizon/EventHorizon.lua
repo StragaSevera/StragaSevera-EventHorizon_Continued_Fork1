@@ -445,7 +445,8 @@ if TWW then
   GetSpellCooldown = function(...)
     local spellCooldownInfo = C_Spell.GetSpellCooldown(...)
     if spellCooldownInfo then
-	  return spellCooldownInfo.startTime, spellCooldownInfo.duration, spellCooldownInfo.isEnabled, spellCooldownInfo.modRate
+	  local enabled = spellCooldownInfo.isEnabled and 1 or 0
+	  return spellCooldownInfo.startTime, spellCooldownInfo.duration, enabled, spellCooldownInfo.modRate
 	end
   end
   GetSpellCharges = function(...)
@@ -486,15 +487,15 @@ if TWW then
   UnitBuff = function(...)
 	local auraBuff = C_UnitAuras.GetBuffDataByIndex(...)
 	if auraBuff then
-	  local name, icon, count, debuffType, duration, expirationTime, source, isStealable, spellId = auraBuff.name, auraBuff.icon, auraBuff.charges, auraBuff.dispelName, auraBuff.duration, auraBuff.expirationTime, auraBuff.sourceUnit, auraBuff.isStealable, auraBuff.spellId
-	  return name, icon, count, debuffType, duration, expirationTime, source, isStealable, _, spellId 
+	  local name, icon, count, dispelType, duration, expirationTime, source, isStealable, spellId = auraBuff.name, auraBuff.icon, auraBuff.charges, auraBuff.dispelName, auraBuff.duration, auraBuff.expirationTime, auraBuff.sourceUnit, auraBuff.isStealable, auraBuff.spellId
+	  return name, icon, count, dispelType, duration, expirationTime, source, isStealable, _, spellId 
 	end		
   end
   UnitDebuff = function(...)
 	local auraDebuff = C_UnitAuras.GetDebuffDataByIndex(...)
 	if auraDebuff then 
-	  local name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellId = auraDebuff.name, auraDebuff.icon, auraDebuff.charges, auraDebuff.dispelName, auraDebuff.duration, auraDebuff.expirationTime, auraDebuff.sourceUnit, auraDebuff.isStealable, auraDebuff.spellId
-	  return name, icon, count, debuffType, duration, expirationTime, source, isStealable, _, spellId 
+	  local name, icon, count, dispelType, duration, expirationTime, source, isStealable, spellId = auraDebuff.name, auraDebuff.icon, auraDebuff.charges, auraDebuff.dispelName, auraDebuff.duration, auraDebuff.expirationTime, auraDebuff.sourceUnit, auraDebuff.isStealable, auraDebuff.spellId
+	  return name, icon, count, dispelType, duration, expirationTime, source, isStealable, _, spellId 
 	end
   end
 end
