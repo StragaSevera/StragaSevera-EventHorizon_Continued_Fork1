@@ -1,6 +1,6 @@
-## Interface: 100200
-## Title: EventHorizon_|c20ff7d0aDruid|r
-## Author: Brusalk
+## Interface: 110002
+## Title: EventHorizon_|Druid
+## Author: Brusalk et al
 ## Dependencies: EventHorizon
 ## LoadOnDemand: 1
 ## OptDeps: 
