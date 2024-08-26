@@ -2603,9 +2603,11 @@ function ns:CheckRequirements()
           if node and node.ID ~= 0 then
             for _, talentId in ipairs(node.entryIDsWithCommittedRanks) do
               local entryInfo = C_Traits.GetEntryInfo(configId, talentId)
-              local definitionInfo = C_Traits.GetDefinitionInfo(entryInfo.definitionID)
+              if entryInfo.definitionID then
+                local definitionInfo = C_Traits.GetDefinitionInfo(entryInfo.definitionID)
 --	        print("tId="..talentId, "sId="..definitionInfo.spellID, select(1,GetSpellInfo(definitionInfo.spellID)).." rank "..node.currentRank)
-              vars.currentTalents[definitionInfo.spellID] = node.currentRank
+                vars.currentTalents[definitionInfo.spellID] = node.currentRank
+              end
 	    end
           end
         end
