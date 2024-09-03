@@ -487,14 +487,14 @@ if TWW then
   UnitBuff = function(...)
 	local auraBuff = C_UnitAuras.GetBuffDataByIndex(...)
 	if auraBuff then
-	  local name, icon, count, dispelType, duration, expirationTime, source, isStealable, spellId = auraBuff.name, auraBuff.icon, auraBuff.charges, auraBuff.dispelName, auraBuff.duration, auraBuff.expirationTime, auraBuff.sourceUnit, auraBuff.isStealable, auraBuff.spellId
+	  local name, icon, count, dispelType, duration, expirationTime, source, isStealable, spellId = auraBuff.name, auraBuff.icon, auraBuff.applications, auraBuff.dispelName, auraBuff.duration, auraBuff.expirationTime, auraBuff.sourceUnit, auraBuff.isStealable, auraBuff.spellId
 	  return name, icon, count, dispelType, duration, expirationTime, source, isStealable, _, spellId 
 	end		
   end
   UnitDebuff = function(...)
 	local auraDebuff = C_UnitAuras.GetDebuffDataByIndex(...)
 	if auraDebuff then 
-	  local name, icon, count, dispelType, duration, expirationTime, source, isStealable, spellId = auraDebuff.name, auraDebuff.icon, auraDebuff.charges, auraDebuff.dispelName, auraDebuff.duration, auraDebuff.expirationTime, auraDebuff.sourceUnit, auraDebuff.isStealable, auraDebuff.spellId
+	  local name, icon, count, dispelType, duration, expirationTime, source, isStealable, spellId = auraDebuff.name, auraDebuff.icon, auraDebuff.applications, auraDebuff.dispelName, auraDebuff.duration, auraDebuff.expirationTime, auraDebuff.sourceUnit, auraDebuff.isStealable, auraDebuff.spellId
 	  return name, icon, count, dispelType, duration, expirationTime, source, isStealable, _, spellId 
 	end
   end
