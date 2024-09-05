@@ -45,6 +45,7 @@ function EventHorizon:InitializeClass()
     requiredTalent = 1822,
     stance = cat,
     debuff = {1822,3},
+    pandemic = true,
     refreshable = true,
     cooldown = 274837,
     smallCooldown = true,
@@ -60,6 +61,7 @@ function EventHorizon:InitializeClass()
 	icon = 285381,
     stance = cat,
     debuff = {1079,2},
+    pandemic = true,
     refreshable = true,
     barcolors = {
      debuffmine  = {252/255, 000/255, 060/255, 0.5}
@@ -72,6 +74,7 @@ function EventHorizon:InitializeClass()
 	requiredTalentUnselected = 285381,
     stance = cat,
     debuff = {1079,2},
+    pandemic = true,
     refreshable = true,
     barcolors = {
      debuffmine  = {252/255, 000/255, 060/255, 0.5}
@@ -82,6 +85,7 @@ function EventHorizon:InitializeClass()
   self:newSpell({
     stance = cat,
     debuff = {106832,3},
+    pandemic = true,
     refreshable = true,
     recharge = 202028,
     barcolors = {
@@ -96,6 +100,7 @@ function EventHorizon:InitializeClass()
     requiredTalent = 155580,
     stance = cat,
     debuff = {155625,2},
+    pandemic = true,
     refreshable = true,
     barcolors = {
      debuffmine  = {050/255, 100/255, 255/255, 0.5}
@@ -179,6 +184,7 @@ function EventHorizon:InitializeClass()
   self:newSpell({
     stance = {human,bear,moonkin,5},
     debuff = {164812,2},
+    pandemic = true,
     refreshable = true,
     cooldown = {202425, 205636},
     smallCooldown = true,
@@ -193,6 +199,7 @@ function EventHorizon:InitializeClass()
     requiredTalent = 93402,
     stance = {0,4},
     debuff = {{93402,2}, {231050,2}},
+    pandemic = true,
     refreshable = true,
     cooldown = 202770,
     smallCooldown = true,
@@ -493,6 +500,7 @@ function EventHorizon:InitializeClass()
     stance = {0,4,5},
     requiredLevel = 2,
     debuff = {164812,2},
+    pandemic = true,
     refreshable = true,
     cast = {339, 2637, 5176, 8936, 20484, 33786, 48438, 197626, 197628},
     cooldown = 48438,
@@ -509,6 +517,7 @@ function EventHorizon:InitializeClass()
     stance = {0,5},
     requiredLevel = 23,
     debuff = {164815,2},
+    pandemic = true,
     refreshable = true,
     cooldown = 18562,
     smallCooldown = true,
