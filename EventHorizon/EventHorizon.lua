@@ -1973,7 +1973,7 @@ local SpellFrame_UpdateDoT = function (self, addnew, source, now, start, expirat
     if self.cast and self.useSmalldebuff then
       self.aurasegment = self:AddSegment(typeid, 'smalldebuff', start, expirationTime)
 
-      local hastedcasttime = select(7, GetSpellInfo(self.lastcast or self.spellname))/1000
+      local hastedcasttime = select(4, GetSpellInfo(self.lastcast or self.spellname))/1000
       self.cantcast = self:AddSegment(typeid, 'cantcast', start, expirationTime-hastedcasttime)
 
             --local pandemic_duration = duration*0.3
@@ -2025,7 +2025,7 @@ local SpellFrame_UpdateDoT = function (self, addnew, source, now, start, expirat
               self.cantcast.stop = expirationTime - self.pandemic
           end
       else
-          self.cantcast.stop = expirationTime - select(7, GetSpellInfo(self.lastcast or self.spellname))/1000
+          self.cantcast.stop = expirationTime - select(4, GetSpellInfo(self.lastcast or self.spellname))/1000
       end
     end
     if self.latesttick then
@@ -2045,7 +2045,7 @@ local SpellFrame_UpdateDoT = function (self, addnew, source, now, start, expirat
       self.dotMod = (expirationTime - start)/self.expectedTicks
     elseif isHasted then
       local bct = ns.config.hastedSpellID[2]
-      local hct = select(7, GetSpellInfo(ns.config.hastedSpellID[1]))/1000
+      local hct = select(4, GetSpellInfo(ns.config.hastedSpellID[1]))/1000
       self.dotMod = self.dot*(hct/bct)
 --[[    if ns.config.nonAffectingHaste then
         for i,nah in ipairs(ns.config.nonAffectingHaste) do
@@ -2107,7 +2107,7 @@ local SpellFrame_UpdateTotem = function (self, addnew, source, now, start, expir
     if self.cast and self.useSmalldebuff then
       self.aurasegment = self:AddSegment(typeid, 'smalldebuff', start, expirationTime)
 
-      local hastedcasttime = select(7, GetSpellInfo(self.lastcast or self.spellname))/1000
+      local hastedcasttime = select(4, GetSpellInfo(self.lastcast or self.spellname))/1000
       self.cantcast = self:AddSegment(typeid, 'cantcast', start, expirationTime-hastedcasttime)
 
             --local pandemic_duration = duration*0.3
@@ -2137,7 +2137,7 @@ local SpellFrame_UpdateTotem = function (self, addnew, source, now, start, expir
     self.targetdebuff.stop = expirationTime
     if self.cantcast then
       self.cantcast.start = start
-      self.cantcast.stop = expirationTime - select(7, GetSpellInfo(self.lastcast or self.spellname))/1000
+      self.cantcast.stop = expirationTime - select(4, GetSpellInfo(self.lastcast or self.spellname))/1000
     end
     if self.latesttick then
       addticks = self.latesttick
@@ -2156,7 +2156,7 @@ local SpellFrame_UpdateTotem = function (self, addnew, source, now, start, expir
       self.dotMod = (expirationTime - start)/self.expectedTicks
     elseif isHasted then
       local bct = ns.config.hastedSpellID[2]
-      local hct = select(7, GetSpellInfo(ns.config.hastedSpellID[1]))/1000
+      local hct = select(4, GetSpellInfo(ns.config.hastedSpellID[1]))/1000
       self.dotMod = self.dot*(hct/bct)
 --[[    if ns.config.nonAffectingHaste then
         for i,nah in ipairs(ns.config.nonAffectingHaste) do
