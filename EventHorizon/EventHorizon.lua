@@ -4205,24 +4205,18 @@ frame.PLAYER_ALIVE = function (self)
   self:UnregisterEvent('PLAYER_ALIVE')
 end
 
-frame.PLAYER_LOGIN = function (self)
-  local talents = GetTalentInfo(1)
-  if talents then
-    self:UnregisterEvent('PLAYER_LOGIN')
-    self:SetScript('OnUpdate', UpdateMouseover)
-    frame2:SetScript('OnEvent', EventHandler)
-    for k,v in pairs(reloadEvents) do
-      frame2:RegisterEvent(k)
-      frame2[k] = loginCheck
-    end
-    if not(ns.isReady) then
-      ns:Initialize()
-    else
-      ns:LoadModules()
-    end
+frame.PLAYER_LOGIN = function(self)
+  self:UnregisterEvent('PLAYER_LOGIN')
+  self:SetScript('OnUpdate', UpdateMouseover)
+  frame2:SetScript('OnEvent', EventHandler)
+  for k, v in pairs(reloadEvents) do
+    frame2:RegisterEvent(k)
+    frame2[k] = loginCheck
+  end
+  if not (ns.isReady) then
+    ns:Initialize()
   else
-    self:UnregisterEvent('PLAYER_LOGIN')
-    self:RegisterEvent('PLAYER_ALIVE')
+    ns:LoadModules()
   end
 end
 
