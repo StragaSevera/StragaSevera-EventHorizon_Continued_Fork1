@@ -2084,7 +2084,9 @@ local SpellFrame_UpdateDoT = function (self, addnew, source, now, start, expirat
       self.targetdebuff = {start=start, stop=expirationTime}
       self.debuffs[guid] = self.targetdebuff
     end
-    self.recenttick = now
+    if not self.recenttick then
+      self.recenttick = now
+    end
   elseif refresh then
     -- debug('refresh', start, expirationTime)
     -- Note: refresh requires afflicted and self.targetdebuff. Also, afflicted and not self.debuff implies addnew.
@@ -2117,7 +2119,7 @@ local SpellFrame_UpdateDoT = function (self, addnew, source, now, start, expirat
   end
   if addticks then
     addticks = self.recenttick or addticks
-    local nexttick = addticks+(self.dotMod or self.dot)
+    local nexttick = nil
     self.nexttick = nil
 
     if self.hasted then
@@ -2142,6 +2144,7 @@ local SpellFrame_UpdateDoT = function (self, addnew, source, now, start, expirat
     self:RemoveTicksAfter(now)
     --self:AddTicks(now)
 
+    nexttick = addticks+(self.dotMod or self.dot)
     if self.hasted then
       isHasted = true
     end
